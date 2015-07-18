@@ -39,6 +39,7 @@ prime_factors_mult = map encode . group . primeFactors
 -- http://mathworld.wolfram.com/TotientFunction.html 
 -- https://wiki.haskell.org/99_questions/Solutions/37 
 -- http://mathworld.wolfram.com/RelativelyPrime.html
+-- http://www.wikiwand.com/en/Euler's_totient_function
 totient m = product [(p - 1) * p ^ (c - 1) | (p, c) <- prime_factors_mult m]
 
 totient_sum a = foldl1 (\acc x -> acc + (totient x) ) [1..a]
