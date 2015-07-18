@@ -1,8 +1,10 @@
 import Data.List
 
--- Brute force .... damn slow... 
+-- Brute force .... Euler 73 
+-- Dont use for Euler 72 ...
+div' a b = (fromIntegral a) / (fromIntegral b)
 fra :: [(Int,Int)]
-fra = [(a,b) |  b<-[2..8000],a<-[1..b-1], a `rem` b /=0, gcd a b ==1 ]
+fra = [(a,b) |  b<-[2..12000],a<-[1..b-1], div' a b > div' 1 3, div' a b < 0.5, gcd a b ==1]
 
 -- https://wiki.haskell.org/99_questions/Solutions/35
 primeFactors n = factor primes n
@@ -45,4 +47,5 @@ totient m = product [(p - 1) * p ^ (c - 1) | (p, c) <- prime_factors_mult m]
 totient_sum a = foldl1 (\acc x -> acc + (totient x) ) [1..a]
 
 main = do 
-  print (totient_sum 1000000) -- minus one will be the answer, rumtime: 3s 
+  -- print (totient_sum 1000000) -- minus one will be the answer, rumtime: 3s 
+  print (length fra)
