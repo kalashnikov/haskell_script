@@ -263,6 +263,46 @@ baseCircle r = Circle (Point 0 0) r
 baseRect :: Float -> Float -> Shape
 baseRect width height = Rectangle (Point 0 0) (Point width height) 
 
+
+data Person = Person { firstName :: String
+                     , lastName  :: String
+                     , age       :: Int
+                     , height    :: Float
+                     , phoneNum  :: String 
+                     , flavor    :: String } deriving (Show) 
+
+data Car = Car { company :: String
+               , model   :: String 
+               , year    :: Int
+               } deriving (Show)
+
+data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday 
+           deriving (Eq, Ord, Show, Read, Bounded, Enum)
+
+
+data LockerState = Taken | Free deriving (Show, Eq)
+
+-- Alias
+type Code = String 
+type LockerMap = Map.Map Int (LockerState, Code) 
+
+lockerLookup :: Int -> LockerMap -> Either String Code 
+lockerLookup lockerNum map = case Map.lookup lockerNum map of 
+    Nothing -> Left $ "Locker" ++ show lockerNum ++ " doesn't exist!"
+    Just (state, code) -> if state /= Taken 
+                          then Right code 
+                          else Left $ "Locker" ++ show lockerNum ++ " is already taken!"
+
+lockers :: LockerMap 
+lockers = Map.fromList 
+  [(100, (Taken, "ZD39I"))
+  ,(101, (Free, "JAH3I")) 
+  ,(103, (Free, "IQSA9")) 
+  ,(105, (Free, "QOTSA")) 
+  ,(109, (Taken, "893JJ")) 
+  ,(110, (Taken, "99292"))
+  ]
+
 --
 
 main :: IO ()
