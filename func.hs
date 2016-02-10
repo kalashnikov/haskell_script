@@ -1,3 +1,10 @@
+import Data.List
+import Data.Char
+import qualified Data.Map as Map
+
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 
 doubleMe x = x + x 
 
@@ -15,6 +22,10 @@ circum' r = 2 * pi * r
 
 fact :: Integer -> Integer 
 fact n = product [1..n] 
+
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 
 --------------------------
 -- Ch.3 Function syntax --
@@ -49,6 +60,11 @@ describeList :: [a] -> String
 describeList ls = "This list is " ++ case ls of [] -> "empty." 
                                                 [x] -> "a singleton list."
                                                 xs -> "a longer list."
+
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+
 --------------------
 -- Ch.4 Recursion --
 --------------------
@@ -98,7 +114,13 @@ quicksort (x:xs) =
       larger       = [a | a <- xs, a  > x ]
   in quicksort smallOrEuqal ++ [x] ++ quicksort larger
 
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+
+---------------------------
 -- Ch.5 High-level function
+---------------------------
 
 applyTwice :: (a -> a) -> a -> a 
 applyTwice f x = f (f x) 
@@ -169,8 +191,79 @@ sqrtSums = length (takeWhile (<1000) (scanl1 (+) (map sqrt [1..]))) + 1
 oddSquareSum :: Integer
 oddSquareSum = sum . takeWhile (<1000) . filter odd $ map (^2) $ [1..]  
 
--- Ch.6
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 
+---------------------------
+------- Ch.6 Module -------
+---------------------------
+
+wordNums :: String -> [(String, Int)]
+wordNums = map (\ws -> (head ws, length ws)) . group . sort .words 
+
+-- encode/decode
+
+encode :: Int -> String -> String
+-- encode offset msg = map (\c -> chr $ ord c + offset) msg
+encode offset msg = map ( chr . (+ offset) . ord ) msg  
+
+decode :: Int -> String -> String 
+decode offset msg = encode (negate offset) msg
+
+-- Maybe & find
+
+digitSum :: Int -> Int 
+digitSum = sum . map digitToInt . show
+
+firstTo :: Int -> Maybe Int
+firstTo n = find (\x -> digitSum x == n) [1..]
+
+db :: Map.Map Int String 
+db = Map.fromList [(1,"Kala"), (2,"Ashley"),(3,"Mom")]
+
+findKey :: (Eq k) => k -> [(k,v)] -> Maybe v 
+
+-- findKey key [] = Nothing
+-- findKey key ((k,v):xs)
+--   | key == k = Just v
+--   | otherwise = findKey key xs
+
+findKey key xs = foldr (\(k,v) acc -> if key == k then Just v else acc) Nothing xs
+
+
+db2 = [(1,"Kala"), (2,"Ashley"), (3,"Mom"), (3,"Dad")]
+-- db2Map :: (Ord k) => [(k, String)] -> Map.Map k String
+-- db2Map xs = Map.fromListWith add xs 
+--   where add num1 num2 = num1 ++ ", " ++ num2
+db2Map :: (Ord k) => [(k, a)] -> Map.Map k [a] 
+db2Map xs = Map.fromListWith (++) $ map (\(k,v) -> (k, [v])) xs 
+
+
+---------------------------
+-------- Ch.7 Data --------
+---------------------------
+
+data Point = Point Float Float deriving (Show) 
+data Shape = Circle Point Float | Rectangle Point Point deriving (Show) 
+
+area :: Shape -> Float
+area (Circle _ r) = pi * r ^ 2
+area (Rectangle (Point x1 y1) (Point x2 y2)) = (abs $ x2 - x1) * (abs $ y2 - y1)
+
+
+nudge :: Shape -> Float -> Float -> Shape
+nudge ( Circle (Point x y) r ) a b = Circle (Point (x+a) (y+b)) r 
+nudge (Rectangle (Point x1 y1) (Point x2 y2)) a b = 
+  Rectangle (Point (x1+a) (y1+b)) (Point (x2+a) (y2+b))
+
+baseCircle :: Float -> Shape 
+baseCircle r = Circle (Point 0 0) r 
+
+baseRect :: Float -> Float -> Shape
+baseRect width height = Rectangle (Point 0 0) (Point width height) 
+
+--
 
 main :: IO ()
 main = print ( factorial 10 )
